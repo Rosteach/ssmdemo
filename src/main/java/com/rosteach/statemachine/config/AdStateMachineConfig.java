@@ -10,64 +10,89 @@ import org.springframework.statemachine.config.builders.StateMachineStateConfigu
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 import org.springframework.statemachine.persist.StateMachineRuntimePersister;
 
-import com.rosteach.statemachine.action.S1AdAction;
-import com.rosteach.statemachine.action.S2AdAction;
-import com.rosteach.statemachine.action.error.S1AdActionError;
-import com.rosteach.statemachine.action.error.S2AdActionError;
-import com.rosteach.statemachine.config.enums.Events;
-import com.rosteach.statemachine.config.enums.States;
-import com.rosteach.statemachine.guard.S1Guard;
-import com.rosteach.statemachine.guard.S2Guard;
+import com.rosteach.statemachine.action.AdPublishAction;
+import com.rosteach.statemachine.action.AdReservedAction;
+import com.rosteach.statemachine.action.AdUnpublishAction;
+import com.rosteach.statemachine.action.error.AdPublishErrorAction;
+import com.rosteach.statemachine.action.error.AdReservedErrorAction;
+import com.rosteach.statemachine.action.error.AdUnpublishErrorAction;
+import com.rosteach.statemachine.config.enums.AdEvent;
+import com.rosteach.statemachine.config.enums.AdState;
+import com.rosteach.statemachine.guard.AdPublishGuard;
+import com.rosteach.statemachine.guard.AdReservedGuard;
+import com.rosteach.statemachine.guard.AdUnpublishGuard;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableStateMachineFactory(name = "sm_ad")
-public class AdStateMachineConfig extends EnumStateMachineConfigurerAdapter<States, Events> {
-	private final SMListener listener;
-	private final StateMachineRuntimePersister<States, Events, String> persister;
+public class AdStateMachineConfig extends EnumStateMachineConfigurerAdapter<AdState, AdEvent> {
+	// Global
+	private final AdSMListener listener;
+	private final StateMachineRuntimePersister<AdState, AdEvent, String> persister;
 
 	// Actions
-	private final S1AdAction s1Action;
-	private final S2AdAction s2Action;
-	private final S1AdActionError s1ActionError;
-	private final S2AdActionError s2ActionError;
+	private final AdPublishAction publishAction;
+	private final AdUnpublishAction unpublishAction;
+	private final AdReservedAction reservedAction;
+
+	// Actions on error
+	private final AdPublishErrorAction publishErrorAction;
+	private final AdUnpublishErrorAction unpublishErrorAction;
+	private final AdReservedErrorAction reservedErrorAction;
 
 	// Guards
-	private final S1Guard s1Guard;
-	private final S2Guard s2Guard;
+	private final AdPublishGuard publishGuard;
+	private final AdUnpublishGuard unpublishGuard;
+	private final AdReservedGuard reservedGuard;
 
 	@Override
-	public void configure(StateMachineConfigurationConfigurer<States, Events> config) throws Exception {
+	public void configure(StateMachineConfigurationConfigurer<AdState, AdEvent> config) throws Exception {
+		// @formatter:off
 		config
 			.withConfiguration()
 				.listener(listener)
 			.and()
 			.withPersistence()
-			.runtimePersister(persister);
+				.runtimePersister(persister);
+		// @formatter:on
 	}
 
 	@Override
-	public void configure(StateMachineStateConfigurer<States, Events> states) throws Exception {
-		states.withStates().initial(States.S1).states(EnumSet.allOf(States.class));
+	public void configure(StateMachineStateConfigurer<AdState, AdEvent> states) throws Exception {
+		// @formatter:off
+		states
+			.withStates()
+				.initial(AdState.INITIAL)
+				.states(EnumSet.allOf(AdState.class));
+		// @formatter:on
 	}
 
 	@Override
-	public void configure(StateMachineTransitionConfigurer<States, Events> transitions) throws Exception {
+	public void configure(StateMachineTransitionConfigurer<AdState, AdEvent> transitions) throws Exception {
+		// @formatter:off
 		transitions
 			.withExternal()
-				.source(States.S1)
-				.target(States.S2)
-				.event(Events.E1)
-				.action(s1Action, s1ActionError)
-				.guard(s1Guard)
+				.source(AdState.INITIAL)
+				.target(AdState.PUBLISH)
+				.event(AdEvent.TRANSITION_TO_PUBLISH)
+				.action(publishAction, publishErrorAction)
+				.guard(publishGuard)
 			.and()
-				.withExternal()
-				.source(States.S2)
-				.target(States.S3)
-				.event(Events.E2)
-				.action(s2Action, s2ActionError)
-				.guard(s2Guard);
+			.withExternal()
+				.source(AdState.PUBLISH)
+				.target(AdState.RESERVED)
+				.event(AdEvent.TRANSITION_TO_RESERVED)
+				.action(reservedAction, reservedErrorAction)
+				.guard(reservedGuard)
+			.and()
+			.withExternal()
+				.source(AdState.PUBLISH)
+				.target(AdState.UNPUBLISH)
+				.event(AdEvent.TRANSITION_TO_UNPUBLISH)
+				.action(unpublishAction, unpublishErrorAction)
+				.guard(unpublishGuard);
+		// @formatter:on
 	}
 }

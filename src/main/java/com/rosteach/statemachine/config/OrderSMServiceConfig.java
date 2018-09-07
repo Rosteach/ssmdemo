@@ -9,18 +9,18 @@ import org.springframework.statemachine.persist.StateMachineRuntimePersister;
 import org.springframework.statemachine.service.DefaultStateMachineService;
 import org.springframework.statemachine.service.StateMachineService;
 
-import com.rosteach.statemachine.config.enums.Events;
-import com.rosteach.statemachine.config.enums.States;
+import com.rosteach.statemachine.config.enums.OrderEvent;
+import com.rosteach.statemachine.config.enums.OrderState;
 
 @Configuration
 public class OrderSMServiceConfig {
 	@Autowired
 	@Qualifier("sm_order")
-	private StateMachineFactory<States, Events> stateMachineFactory;
+	private StateMachineFactory<OrderState, OrderEvent> stateMachineFactory;
 	
 	@Bean(name="sm_order_service")
-	public StateMachineService<States, Events> stateMachineService(
-			StateMachineRuntimePersister<States, Events, String> stateMachineRuntimePersister) {
-		return new DefaultStateMachineService<States, Events>(stateMachineFactory, stateMachineRuntimePersister);
+	public StateMachineService<OrderState, OrderEvent> stateMachineService(
+			StateMachineRuntimePersister<OrderState, OrderEvent, String> stateMachineRuntimePersister) {
+		return new DefaultStateMachineService<OrderState, OrderEvent>(stateMachineFactory, stateMachineRuntimePersister);
 	}
 }

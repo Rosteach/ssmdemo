@@ -8,68 +8,68 @@ import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.transition.Transition;
 import org.springframework.stereotype.Component;
 
-import com.rosteach.statemachine.config.enums.Events;
-import com.rosteach.statemachine.config.enums.States;
+import com.rosteach.statemachine.config.enums.AdEvent;
+import com.rosteach.statemachine.config.enums.AdState;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class SMListener implements StateMachineListener<States, Events> {
+public class AdSMListener implements StateMachineListener<AdState, AdEvent> {
 	@Override
-	public void stateChanged(State<States, Events> from, State<States, Events> to) {
+	public void stateChanged(State<AdState, AdEvent> from, State<AdState, AdEvent> to) {
 		log.info("State changed to {} ", to.getId());
 	}
 
 	@Override
-	public void stateEntered(State<States, Events> state) {
+	public void stateEntered(State<AdState, AdEvent> state) {
 		log.info("State {} is entered ", state.getId());
 	}
 
 	@Override
-	public void stateExited(State<States, Events> state) {
+	public void stateExited(State<AdState, AdEvent> state) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void eventNotAccepted(Message<Events> event) {
+	public void eventNotAccepted(Message<AdEvent> event) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void transition(Transition<States, Events> transition) {
+	public void transition(Transition<AdState, AdEvent> transition) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void transitionStarted(Transition<States, Events> transition) {
+	public void transitionStarted(Transition<AdState, AdEvent> transition) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void transitionEnded(Transition<States, Events> transition) {
+	public void transitionEnded(Transition<AdState, AdEvent> transition) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void stateMachineStarted(StateMachine<States, Events> stateMachine) {
+	public void stateMachineStarted(StateMachine<AdState, AdEvent> stateMachine) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void stateMachineStopped(StateMachine<States, Events> stateMachine) {
+	public void stateMachineStopped(StateMachine<AdState, AdEvent> stateMachine) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void stateMachineError(StateMachine<States, Events> stateMachine, Exception exception) {
+	public void stateMachineError(StateMachine<AdState, AdEvent> stateMachine, Exception exception) {
 		// TODO Auto-generated method stub
 
 	}
@@ -81,7 +81,7 @@ public class SMListener implements StateMachineListener<States, Events> {
 	}
 
 	@Override
-	public void stateContext(StateContext<States, Events> stateContext) {
+	public void stateContext(StateContext<AdState, AdEvent> stateContext) {
 		// TODO Auto-generated method stub
 
 	}
